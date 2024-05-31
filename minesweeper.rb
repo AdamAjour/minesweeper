@@ -1,3 +1,4 @@
+require 'securerandom'
 
 Rows = 9
 Columns = 9
@@ -18,12 +19,25 @@ Letter_map = {
 }
 
 @front_board = Array.new(Rows) { |i| Array.new(Columns) { |i| "_" }}
-@back_board = Array.new(Rows) { |i| Array.new(Columns) { |i| "*" }}
-@back_board[3][3] = "X"
+@back_board = Array.new(Rows) { |i| Array.new(Columns) { |i| "E" }}
 
 def nl()
   print("\n")
 end
+
+def fill_back_board()
+  bomb_count = 10
+  while bomb_count != 0
+    row_bomb_index = SecureRandom.random_number(9)
+    column_bomb_index = SecureRandom.random_number(9)
+    if @back_board[row_bomb_index.to_i][column_bomb_index.to_i] == "E"
+      @back_board[row_bomb_index][column_bomb_index] = "*"
+      bomb_count -= 1
+    end
+
+  end
+end
+
 def board_boarders()
   for letter in "A".."I" do
     print("\t#{letter}")
@@ -38,7 +52,7 @@ def front_board_display()
     print("#{row_number}")
     row_number += 1
     for columns in 0..Columns do
-      print("\t#{@front_board[rows][columns]}")
+      print("\t#{@back_board[rows][columns]}")
     end
     nl()
     nl()
@@ -122,6 +136,7 @@ def select_square(square_coordinates)
   return false
 end
 
+fill_back_board()
 define_format()
 while(!gameover)
   board_boarders()
