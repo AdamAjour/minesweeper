@@ -53,7 +53,9 @@ def fill_back_board_numbers()
         for x in i-1..i+1 do
           for y in j-1..j+1 do
             if(in_board( x , y ) && !(x == i &&  y == j))
-              @back_board[x][y] = @back_board[x][y].to_i + 1
+              if(@back_board[x][y] != "*")
+                @back_board[x][y] = @back_board[x][y].to_i + 1
+              end
             end
           end
         end
