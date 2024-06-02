@@ -2,7 +2,8 @@ require 'securerandom'
 
 Rows = 9
 Columns = 9
-
+@dashed_bombs = 10
+print("#{@dashed_number}")
 @gameover = false
 list_of_letters = "ABCDEFGHI"
 @square = ""
@@ -107,6 +108,33 @@ def define_format()
   nl()
 end
 
+def check_win()
+  for rows in 0..Rows-1 do
+    for columns in 0..Columns-1 do
+      if @back_board[rows][columns] != "*" && @front_board[rows][columns] == "_"
+        return false
+      end
+    end
+  end
+  @gameover = true
+  return true
+end
+
+def winning_banner()
+  win_flag = check_win()
+  if win_flag
+    board_boarders()
+    front_board_display()
+    nl()
+    print("-"*90)
+    nl()
+    print("\t\t\t\t\tYou win!!!")
+    nl()
+    print("-"*90)
+    nl()
+  end
+end
+
 def take_input()
   nl()
   print("Choose a square to select: ")
@@ -151,17 +179,25 @@ def flip_input(square)
   return arr.join()
 end
 
+def losing_banner()
+  board_boarders()
+  front_board_display()
+  nl()
+  print("-"*90)
+  nl()
+  print("\t\t\t\t\tGame Over!!!")
+  nl()
+  print("-"*90)
+  nl()
+  @gameover = true
+end
+
 def select_square(square_coordinates)
   letter_num = Letter_map[square_coordinates[0]]
   if  @front_board[(square_coordinates[1].to_i - 1)][letter_num] != @back_board[(square_coordinates[1].to_i - 1)][letter_num]
     @front_board[(square_coordinates[1].to_i - 1)][letter_num] = @back_board[(square_coordinates[1].to_i - 1)][letter_num]
     if @back_board[(square_coordinates[1].to_i - 1)][letter_num] == "*"
-      board_boarders()
-      front_board_display()
-      nl()
-      print("Game Over!")
-      nl()
-      @gameover = true
+      losing_banner()
     end
     return true
   end
@@ -175,4 +211,5 @@ while(!@gameover)
   board_boarders()
   front_board_display()
   take_input()
+  winning_banner()
 end
