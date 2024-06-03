@@ -10,14 +10,6 @@ list_of_letters = "ABCDEFGHI"
 white_space_number = 24
 @zero_stack = []
 @hash_map = {}
-# @hash_map[[1,3]] = [[9,2],[3,4],[4,5]]
-# @hash_map[[1,4]] = [6,6]
-# @arr = []
-# @hash_map.each do |key, value|
-#   print ("#{key[1]}")
-# end
-
-# print("#{@hash_map}")
 @stack_zero_count = 0
 Letter_map = {
   "A" => 0,
@@ -96,20 +88,6 @@ def front_board_display()
     nl()
   end
 end
-
-def print_back_board()
-  row_number = 1
-  for rows in 0..Rows-1 do
-    print("#{row_number}")
-    row_number += 1
-    for columns in 0..Columns do
-      print("\t#{@back_board[rows][columns]}")
-    end
-    nl()
-    nl()
-  end
-end
-
 
 def has_digits?(str)
   return str.count("1-9") == 1
@@ -234,15 +212,15 @@ def loop_over_hash()
   @hash_map.clone.each do |key, value|
     while(value.length() > 0)
       value.each { |element| 
-      fill_zero_stack(element[0] , element[1]) 
-      value.shift()
-    }
+        fill_zero_stack(element[0] , element[1]) 
+        value.shift()
+      }
+    end
+    @hash_map.delete(key)
+    if(@hash_map.size != 0)
+      loop_over_hash()
     end
   end
-
-  nl()
-  print("#{@hash_map}")
-  nl()
 end
 
 def auto_select_around_zero(row, column)
@@ -296,9 +274,6 @@ end
 
 fill_back_board_bomb()
 fill_back_board_numbers()
-
-board_boarders()
-print_back_board()
 define_format()
 while(!@gameover)
   board_boarders()
