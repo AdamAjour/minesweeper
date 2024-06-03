@@ -8,6 +8,17 @@ print("#{@dashed_number}")
 list_of_letters = "ABCDEFGHI"
 @square = ""
 white_space_number = 24
+@zero_stack = []
+@hash_map = {}
+# @hash_map[[1,3]] = [[9,2],[3,4],[4,5]]
+# @hash_map[[1,4]] = [6,6]
+# @arr = []
+# @hash_map.each do |key, value|
+#   print ("#{key[1]}")
+# end
+
+# print("#{@hash_map}")
+@stack_zero_count = 0
 Letter_map = {
   "A" => 0,
   "B" => 1,
@@ -85,6 +96,20 @@ def front_board_display()
     nl()
   end
 end
+
+def print_back_board()
+  row_number = 1
+  for rows in 0..Rows-1 do
+    print("#{row_number}")
+    row_number += 1
+    for columns in 0..Columns do
+      print("\t#{@back_board[rows][columns]}")
+    end
+    nl()
+    nl()
+  end
+end
+
 
 def has_digits?(str)
   return str.count("1-9") == 1
@@ -192,11 +217,68 @@ def losing_banner()
   @gameover = true
 end
 
+def fill_zero_stack(row, column)
+  for i in row-1..row+1 do
+    for j in column-1..column+1 do
+      if (in_board(i, j) && @front_board[i][j] == "_")
+        choose_square(i , j)
+        if @back_board[i][j].to_i == 0
+          @hash_map[[i,j]] = have_a_zero(i , j)
+        end
+      end
+    end
+  end
+end
+
+def loop_over_hash()
+  @hash_map.clone.each do |key, value|
+    while(value.length() > 0)
+      value.each { |element| 
+      fill_zero_stack(element[0] , element[1]) 
+      value.shift()
+    }
+    end
+  end
+
+  nl()
+  print("#{@hash_map}")
+  nl()
+end
+
+def auto_select_around_zero(row, column)
+  for i in row-1..row+1 do
+    for j in column-1..column+1 do
+      if (in_board(i, j))
+        choose_square(i,j)
+      end
+    end
+  end
+end
+
+def have_a_zero(row, column)
+  arr = []
+  for i in row-1..row+1 do
+    for j in column-1..column+1 do
+      if (in_board(i, j) &&  @back_board[i][j].to_i == 0 && @front_board[i][j] == "_")
+        arr << [i,j]
+      end
+    end
+  end
+  return arr
+end
+
+def clear_around(row, column)
+  
+end
+
 def select_square(square_coordinates)
   letter_num = Letter_map[square_coordinates[0]]
   if  @front_board[(square_coordinates[1].to_i - 1)][letter_num] != @back_board[(square_coordinates[1].to_i - 1)][letter_num]
     @front_board[(square_coordinates[1].to_i - 1)][letter_num] = @back_board[(square_coordinates[1].to_i - 1)][letter_num]
-    if @back_board[(square_coordinates[1].to_i - 1)][letter_num] == "*"
+    if @back_board[(square_coordinates[1].to_i - 1)][letter_num] == 0
+      fill_zero_stack((square_coordinates[1].to_i - 1), letter_num)
+      loop_over_hash()
+    elsif @back_board[(square_coordinates[1].to_i - 1)][letter_num] == "*"
       losing_banner()
     end
     return true
@@ -204,8 +286,19 @@ def select_square(square_coordinates)
   return false
 end
 
+def choose_square(row , column)
+
+  if(@front_board[row][column] == "_")
+    @front_board[row][column] = @back_board[row][column]
+  end
+
+end
+
 fill_back_board_bomb()
 fill_back_board_numbers()
+
+board_boarders()
+print_back_board()
 define_format()
 while(!@gameover)
   board_boarders()
